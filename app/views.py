@@ -56,7 +56,7 @@ def login():
     if request.method == 'POST' and loginform.validate_on_submit():
         username = request.form['username']
         password = request.form['password']
-        user = Users.query.filter_by(username=username,password=password).first()
+        users = Users.query.filter_by(username=username,password=password).first()
         
         
         if len(users) == 0:
