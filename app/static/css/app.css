@@ -5,9 +5,6 @@ body {
     
 }
 
-#navbarSupportedContent{
-    margin-left: 830px;
-}
 
 #camicon{
     color:black;
@@ -56,6 +53,7 @@ body {
 #homebtns{
     margin-top:60px;
     text-align:center;
+    
 }
 
 #signupForm{
@@ -69,7 +67,7 @@ body {
     margin-bottom:50px;
 }
 
-#regtitle,#logtitle{
+#regtitle,#logtitle,#posttitle{
     margin-left:350px;
     margin-top:80px;
 }
@@ -88,7 +86,7 @@ label{
     width:100%;
 }
 
-#loginform{
+#loginform,#postforms{
     background-color:white;
     margin-left:350px;
     padding:35px;
@@ -96,4 +94,136 @@ label{
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     border:1px solid;
     border-color:#b3b3b3;
+}
+
+#postbut{
+    float:right;
+    width:20%;
+}
+
+#postdiv{
+    margin-top: 20px;
+ 
+    width:700px;
+    background-color: white;
+    margin-bottom: 20px;
+    margin-left: 100px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    border:1px solid;
+    border-color:#b3b3b3;
+}
+
+#postpic{
+    height:300px;
+    width:100%;
+}
+
+#postprofile{
+    margin:15px;
+}
+
+#postdate{
+    float:right;
+    margin-right:20px;
+}
+
+#postlike{
+    margin:20px;
+}
+
+#postlike:hover { 
+    color: red;
+    cursor: pointer;
+}
+
+.caption{
+    margin-left:20px;
+    margin-right:20px;
+    margin-top:20px;
+    margin-bottom:100px;
+    color:grey;
+    font-size: 18px;
+}
+
+#likediv{
+    margin-bottom:20px;
+    color:#696969;
+    font-weight: bold;
+    
+}
+
+#selfheart{
+    font-size:24px;
+    color:red;
+}
+
+#userdiv{
+    margin:10px;
+    width:1085px;
+    background-color:white;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    border:1px solid;
+    border-color:#b3b3b3;
+    padding-top: 20px;
+    padding-left:30px;
+    padding-right: 30px;
+    padding-bottom: 30px;
+    
+}
+
+#proimage{
+    width:150px;
+    height:200px;
+    
+}
+
+#postimages{
+    width:250px;
+    height:300px;
+
+    
+}
+
+
+#imagegrid{
+    margin-left: 10px;
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+    grid-row-gap: 30px;
+    margin-top: 40px;
+}
+
+#pro{
+    color:#999999;
+    font-size: 17px;
+    font-family: "arial";
+}
+
+#follbut{
+    width:100%;
+}
+
+#postlength{
+    float:left;
+    margin-right: 50px;
+    margin-bottom: 50px;
+    text-align: center;
+}
+
+#folllength{
+    text-align: center;
+}
+
+#butlabels{
+    color:grey;
+    font-weight: bold;
+}
+#uname{
+    color:#4d4d4d;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+h4{
+    color:#4d4d4d;
 }

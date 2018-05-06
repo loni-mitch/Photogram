@@ -171,7 +171,7 @@ def add_post(user_id):
             db.session.add(post)
             db.session.commit()
             
-            return jsonify({'message':"You have successfully created a new post!"})
+            return jsonify({'message':"You have successfully created a new post"})
             
     elif request.method == "GET":
         user = Users.query.filter_by(id = user_id).first()
@@ -190,10 +190,10 @@ def add_post(user_id):
 
 
 #------------------------------------------USER----------------------------------------------
-@app.route('/api/users/<user_id>/', methods=["GET"])
+@app.route('/api/users/<user_id>/', methods=["GET",])
 @requires_auth
 def get_user(user_id):
-    user = Users.query.filter_by(id = user_id).first()
+    user = Users.query.filter_by(id = userid).first()
     output = []
     join= user.joined_on.strftime("%B %Y");
     info= {"user_id": user.id, "username": user.username, "firstname": user.firstname, "lastname": user.lastname, "email": user.email, "location": user.location, "biography": user.biography,"image": user.image, "joined_on": join}
@@ -211,7 +211,7 @@ def create_like(post_id):
         like = Likes(user_id = session['userid'], post_id = post_id)
         db.session.add(like)
         db.session.commit()
-        return jsonify (message = 'You liked a post!')
+        return jsonify (message= 'You liked a post!')
     return jsonify (DB= 'Already liked post!')
     
     

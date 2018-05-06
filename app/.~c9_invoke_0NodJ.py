@@ -14,6 +14,7 @@ from forms import SignUpForm,LoginForm,PostForm
 from functools import wraps
 from models import Users, Posts, Likes, Follows
 from werkzeug.utils import secure_filename
+from app.models import Users,Posts, Follows, Likes
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
 from functools import wraps
@@ -120,11 +121,11 @@ def register():
         db.session.add(user)
         db.session.commit()
     
-        register_response = [{'message': 'User has been successfully registered'}]
-        return jsonify(result = register_response)
+        response = [{'message': 'User has been successfully registered'}]
+        return jsonify(result = response)
     error_msgs = form_errors(form)
     error = [{'errors': error_msgs}]
-    return jsonify(errors = error)
+    return jsonify(errors =error)
 
 
 #--------------------------------------------POSTS-------------------------------------------
@@ -146,7 +147,7 @@ def show_all_posts():
         else:
             likeflag = True
         postdate= post.created_on.strftime("%d %b %Y");
-        posted = {"post_id":post.id,"user_id": post.user_id, "username": user.username, "image": user.image, "postimage": post.postimage, "caption": post.caption, "created_on": postdate, "likes": likescount, "likeflag": likeflag}
+        posted = {"postid":post.id,"userid": post.user_id, "username": user.username, "profilephoto": user.image, "photo": post.postimage, "caption": post.caption, "created_on": postdate, "likes": likescount, "likeflag": likeflag}
         postlist.append(posted)
     return jsonify(data = postlist)
         
@@ -160,18 +161,17 @@ def add_post(user_id):
         if form.validate_on_submit():
             userid = user_id
             caption = request.form['caption']
-            postimage  = request.files['postimage']
+            photo  = request.files['postimage']
             post_date = datetime.datetime.now()
             
-            
-            post_photo = secure_filename(postimage.filename)
-            postimage.save(os.path.join(filefolder, post_photo))
+            post_photo = secure_filename(photo.filename)
             post = Posts(user_id = userid, postimage = post_photo, caption = caption, created_on = post_date)
             
             db.session.add(post)
             db.session.commit()
             
-            return jsonify({'message':"You have successfully created a new post!"})
+            photo.save(os.path.join(filefolder, post_photo))
+            return jsonify({'message':"Successfully created a new post"})
             
     elif request.method == "GET":
         user = Users.query.filter_by(id = user_id).first()
@@ -181,7 +181,7 @@ def add_post(user_id):
         
         userposts = []
         for user_post in user_posts:
-            post_data = {'id':user_post.id,'user_id': user_post.user_id,'postimage': user_post.postimage,'caption': user_post.caption,'created_on': user_post.created_on}
+            post_data = {'id':user_post.id,'user_id': user_post.user_id,'postimage': user_post.post_photo,'caption': user_post.caption,'created_on': user_post.post_date}
             userposts.append(post_data)
         return jsonify(data = userposts)
     error_msgs = form_errors(form)
@@ -194,54 +194,59 @@ def add_post(user_id):
 @requires_auth
 def get_user(user_id):
     user = Users.query.filter_by(id = user_id).first()
-    output = []
-    join= user.joined_on.strftime("%B %Y");
-    info= {"user_id": user.id, "username": user.username, "firstname": user.firstname, "lastname": user.lastname, "email": user.email, "location": user.location, "biography": user.biography,"image": user.image, "joined_on": join}
-    output.append(info)
-    return jsonify(profile = output, isuser=True)
+    userlist = []
+    if (int(user_id) == session['userid']):
+        date_join = user.joined_on.strftime("%B %Y");
+        user_info = {"userid": user.id, "username": user.username, "firstname": user.firstname, "lastname": user.lastname, "email": user.email, "location": user.location, "biography": user.biography,"photo": user.image, "joined_on": date_join}
+        userlist.append(user_info)
+        return jsonify(profile = userlist, isuser = True)
+    date_join = user.joined_on.strftime("%B %Y");
+    user_info = {"userid": user.id, "username": user.username, "firstname": user.firstname, "lastname": user.lastname, "email": user.email, "location": user.location, "biography": user.biography,"photo": user.image, "joined_on": date_join}
+    userlist.append(user_info)
+    return jsonify(profile = user_list)
 
 
 
 #-------------------------------------------LIKE--------------------------------------------
 @app.route('/api/users/<post_id>/like',methods=["POST"])
 @requires_auth
-def create_like(post_id):
-    likecheck = Likes.query.filter_by(user_id = session['userid'], post_id = post_id).first()
-    if(likecheck is None):
+def like_post(post_id):
+    like_check = Likes.query.filter_by(user_id = session['userid'], post_id = post_id).first()
+    if(like_check is None):
         like = Likes(user_id = session['userid'], post_id = post_id)
         db.session.add(like)
         db.session.commit()
-        return jsonify (message = 'You liked a post!')
-    return jsonify (DB= 'Already liked post!')
+        return jsonify (message= 'Post liked!')
+    return jsonify (DB = 'You liked this post already!')
     
     
 
 #------------------------------------FOLLOW--------------------------------------------------
-@app.route('/api/users/<user_id>/followersnumber',methods=["GET"])
+@app.route('/api/users/<user_id>/followers',methods=["GET"])
 @requires_auth
-def followersnumber(user_id):
-    numberfollow = Follows.query.filter_by(user_id=user_id).all()
-    numberoffollower=[]
-    for number in numberfollow:
+def followers(user_id):
+    followers_count = Follows.query.filter_by(user_id = user_id).all()
+    number_of_followers = []
+    for count in followers_count:
         num = {'test': "counted"}
-        numberoffollower.append(num)
-    return jsonify (follower= numberoffollower)
+        number_of_followers.append(num)
+    return jsonify (follower = number_of_followers)
     
 @app.route('/api/users/<user_id>/following',methods=["GET"])
 @requires_auth
-def followercheck(user_id):
-    followcheck = Follows.query.filter_by(user_id=user_id, follower_id=session['userid']).first()
-    if(followcheck is None):
-        return jsonify (following= False)
-    return jsonify (following= True)
+def followers_check(user_id):
+    follow_check = Follows.query.filter_by(user_id = user_id, follower_id = session['userid']).first()
+    if(follow_check is None):
+        return jsonify (following = False)
+    return jsonify (following = True)
     
 @app.route('/api/users/<user_id>/follow',methods=["POST"])
 @requires_auth
-def create_follow(user_id):
+def follow_user(user_id):
     follow = Follows(user_id = user_id, follower_id = session['userid'])
     db.session.add(follow)
     db.session.commit()
-    return jsonify (message= 'You followed a user!')
+    return jsonify (message = 'you are now following this user!')
     
 
 #-------------------------------OTHER USEFUL ROUTES--------------------------------------
